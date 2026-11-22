@@ -1,0 +1,71 @@
+# Experimental: builds the Ztunes iPhone source in this branch.
+# The artifact is unsigned and must be signed by a compatible sideloading tool.
+name: Build Ztunes iPhone IPA (experimental)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-15
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-apple-ios
+
+      - name: Install XcodeGen
+        run: brew list xcodegen >/dev/null 2>&1 || brew install xcodegen
+
+      - name: Prepare host libmpv for Swift bindings
+        run: |
+          set -euo pipefail
+          LIBDIR="$(scripts/macos/fetch-libmpv.sh --arch arm64 | tail -1)"
+          echo "LIBRARY_PATH=$LIBDIR" >> "$GITHUB_ENV"
+
+      - name: Build Rust core for iPhone
+        run: scripts/build-ios-core.sh --release --device
+
+      - name: Generate Xcode project
+        run: cd ios/Encore && xcodegen generate
+
+      - name: Build unsigned iPhone application
+        run: |
+          set -euo pipefail
+          xcodebuild build \
+            -project ios/Encore/Encore.xcodeproj \
+            -scheme Encore \
+            -configuration Release \
+            -destination 'generic/platform=iOS' \
+            -derivedDataPath "$RUNNER_TEMP/ios-build" \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Package unsigned IPA
+        run: |
+          set -euo pipefail
+          APP="$RUNNER_TEMP/ios-build/Build/Products/Release-iphoneos/Encore.app"
+          test -d "$APP"
+          mkdir -p "$RUNNER_TEMP/ipa/Payload"
+          ditto "$APP" "$RUNNER_TEMP/ipa/Payload/Encore.app"
+          BUNDLED="$RUNNER_TEMP/ipa/Payload/Encore.app"
+          rm -f "$BUNDLED/embedded.mobileprovision"
+          find "$BUNDLED" -name _CodeSignature -type d -prune -exec rm -rf {} +
+          while IFS= read -r -d '' f; do
+            if file -b "$f" | grep -q '^Mach-O' && codesign -d "$f" >/dev/null 2>&1; then
+              codesign --remove-signature "$f"
+            fi
+          done < <(find "$BUNDLED" -type f -perm -u+x -print0)
+          cd "$RUNNER_TEMP/ipa"
+          zip -qry "$RUNNER_TEMP/Ztunes-unsigned.ipa" Payload
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Ztunes-unsigned-IPA
+          path: ${{ runner.temp }}/Ztunes-unsigned.ipa
+          if-no-files-found: error
+          retention-days: 14

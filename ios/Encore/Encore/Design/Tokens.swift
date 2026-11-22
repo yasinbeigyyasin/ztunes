@@ -38,17 +38,22 @@ enum Palette {
     static let meta = Color(hex: "#cdcdcd")
     static let muted = Color.white.opacity(0.7)
     static let dim = Color(hex: "#7c7c7c")
-    // accent: Spotless brand pink (scripts/brand/final.py PINK) is the ONE accent; nothing else
-    // hard-codes it. Hover = 12% toward white, press = 12% toward black. Black sits on it (~5.9:1;
-    // white would be ~3.6:1). As words on dark surfaces use `accentText`: the base is ~5.3:1 on
-    // #121212 but drops toward 4:1 on the raised #1f1f1f/#282828 sheets and cards.
-    static let accent = Color(hex: "#ff2d7a")
-    static let accentHover = Color(hex: "#ff468a")
-    static let accentPress = Color(hex: "#e0286b")
-    static let accentText = Color(hex: "#ff4f8f")
-    /// Deep brand tile behind an accent glyph (Your Episodes).
-    static let accentTile = Color(hex: "#5a0e30")
-    static let accentTileDeep = Color(hex: "#33071b")
+    // Ztunes accent selection is stored locally. Red is the default.
+    static func accent(for name: String) -> Color {
+        switch name {
+        case "blue": Color(hex: "#4b8dff")
+        case "green": Color(hex: "#36c778")
+        case "amber": Color(hex: "#f5aa3c")
+        case "violet": Color(hex: "#a577ff")
+        default: Color(hex: "#ff4b4b")
+        }
+    }
+    static var accent: Color { accent(for: UserDefaults.standard.string(forKey: "ztunes.accent") ?? "red") }
+    static var accentHover: Color { accent }
+    static var accentPress: Color { accent }
+    static var accentText: Color { accent }
+    static let accentTile = Color(hex: "#5a1515")
+    static let accentTileDeep = Color(hex: "#330a0a")
     /// Semantic "went up" (chart trends): deliberately not the brand, so it can't be confused with
     /// the red "down" arrow.
     static let positive = Color(hex: "#34d399")
@@ -57,7 +62,7 @@ enum Palette {
     // progress
     static let progressTrack = Color.white.opacity(0.3)
     static let border = Color.white.opacity(0.10)
-    static let likedCover = LinearGradient(colors: [Color(hex: "#ff2d7a"), Color(hex: "#6a1b9a")],
+    static let likedCover = LinearGradient(colors: [Color(hex: "#ff4b4b"), Color(hex: "#6a1b9a")],
                                            startPoint: .topLeading, endPoint: .bottomTrailing)
     static let likedHeader = Color(red: 80 / 255, green: 56 / 255, blue: 160 / 255)
 }

@@ -3,11 +3,11 @@
 <plist version="1.0">
 <dict>
 	<key>CFBundleDevelopmentRegion</key><string>en</string>
-	<key>CFBundleDisplayName</key><string>Spotless</string>
+	<key>CFBundleDisplayName</key><string>Ztunes</string>
 	<key>CFBundleExecutable</key><string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key><string>$(PRODUCT_BUNDLE_IDENTIFIER)</string>
 	<key>CFBundleInfoDictionaryVersion</key><string>6.0</string>
-	<key>CFBundleName</key><string>Spotless</string>
+	<key>CFBundleName</key><string>Ztunes</string>
 	<key>CFBundlePackageType</key><string>APPL</string>
 	<key>CFBundleShortVersionString</key><string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key><string>$(CURRENT_PROJECT_VERSION)</string>
@@ -18,8 +18,8 @@
 		<key>CFBundleURLSchemes</key><array><string>spotless</string><string>encore</string></array>
 	</dict></array>
 	<key>LSRequiresIPhoneOS</key><true/>
-	<key>NSCameraUsageDescription</key><string>Spotless uses the camera to scan the code that links your devices.</string>
-	<key>NSLocalNetworkUsageDescription</key><string>Spotless finds your other devices on this Wi-Fi to link them.</string>
+	<key>NSCameraUsageDescription</key><string>Ztunes uses the camera to scan the code that links your devices.</string>
+	<key>NSLocalNetworkUsageDescription</key><string>Ztunes finds your other devices on this Wi-Fi to link them.</string>
 	<key>NSBonjourServices</key><array><string>_spotless-sync._tcp</string></array>
 	<key>UIFileSharingEnabled</key><true/>
 	<key>LSSupportsOpeningDocumentsInPlace</key><false/>
@@ -34,6 +34,7 @@
 	<array>
 		<string>Figtree-Regular.ttf</string><string>Figtree-Medium.ttf</string><string>Figtree-SemiBold.ttf</string>
 		<string>Figtree-Bold.ttf</string><string>Figtree-ExtraBold.ttf</string><string>Figtree-Black.ttf</string>
+        <string>Vazirmatn-Bold.ttf</string>
 	</array>
 	<key>UIApplicationSceneManifest</key>
 	<dict><key>UIApplicationSupportsMultipleScenes</key><false/></dict>

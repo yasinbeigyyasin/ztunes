@@ -57,7 +57,7 @@ struct RadioView: View {
 
     var body: some View {
         EntityScaffold(title: title, artURL: art, isPlayingThis: playingThis, onPlay: onPlay) { off in
-            EntityHeader(offset: off, cover: AnyView(cover), title: title, owner: "Spotless", ownerArt: nil,
+            EntityHeader(offset: off, cover: AnyView(cover), title: title, owner: "Ztunes", ownerArt: nil,
                          ownerBadge: AnyView(SpotlessMark(size: 24)), meta: meta, description: page?.description,
                          actions: AnyView(actionIcons), playing: playingThis && !app.player.paused,
                          onShuffle: { play(nil, shuffle: true) }, shuffleOn: playingThis && app.player.shuffle, onPlay: onPlay)
@@ -81,7 +81,7 @@ struct RadioView: View {
         .artAccent(art, into: $accent)
         .task(id: "\(kind):\(id)#\(attempt)") { await load() }
         .sheet(isPresented: $moreOpen) {
-            RadioMoreSheet(title: title, art: art, subtitle: page?.description ?? "Spotless", rows: moreRows)
+            RadioMoreSheet(title: title, art: art, subtitle: page?.description ?? "Ztunes", rows: moreRows)
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.visible)
                 .presentationBackground { SheetGlass() }

@@ -149,9 +149,10 @@ extension SettingsStore {
 
 struct SettingsView: View {
     @Environment(AppModel.self) private var app
+    @State private var showZtunesAppearance = false
 
     private let rows: [(SettingsPage, String, String)] = [
-        (.account, "user-circle", "YouTube account • Import • Export library"),
+        (.account, "user-circle", "Google account • Import • Export library"),
         (.contentDisplay, "device-mobile", "Explicit content • Unplayable songs"),
         (.playback, "play-circle", "Crossfade • Autoplay • Equalizer"),
         (.podcasts, "microphone", "Skip sponsors • Ad-free episodes • OPML"),
@@ -165,6 +166,9 @@ struct SettingsView: View {
 
     var body: some View {
         SettingsScaffold(title: "Settings and privacy") {
+            SettingsNavRow(icon: "sliders-horizontal", title: "Customization", subtitle: "Accent color • Persian lyrics") {
+                showZtunesAppearance = true
+            }
             // First, so linking a Mac is easy to find (Screens/Devices.swift).
             DevicesSection()
             Button { app.router.push(.settingsPage(.account)) } label: {
@@ -186,6 +190,7 @@ struct SettingsView: View {
                 SettingsNavRow(icon: icon, title: page.title, subtitle: sub) { app.router.push(.settingsPage(page)) }
             }
         }
+        .sheet(isPresented: $showZtunesAppearance) { ZtunesAppearanceSettings() }
         .task { await app.settings.refresh(); await app.devices.refresh() }
     }
 }
@@ -339,5 +344,28 @@ struct SleepTimerSheet: View {
                 .padding(.horizontal, Space.gutter).frame(height: 52).contentShape(Rectangle())
         }
         .buttonStyle(SettingsPressStyle())
+    }
+}
+
+// Ztunes-specific appearance settings, persisted on the device.
+private struct ZtunesAppearanceSettings: View {
+    @AppStorage("ztunes.accent") private var accent = "red"
+    @AppStorage("ztunes.lyrics.vazirmatn") private var useVazirmatn = true
+    @AppStorage("ztunes.lyrics.rtl") private var alignPersianRight = true
+    private let colors = [("red", "Red"), ("blue", "Blue"), ("green", "Green"),
+                          ("amber", "Amber"), ("violet", "Violet")]
+    var body: some View {
+        SettingsScaffold(title: "Customization") {
+            SettingsHeader(title: "Accent color")
+            ForEach(colors, id: \.0) { key, label in
+                SettingsRadioRow(title: label, selected: accent == key) { accent = key }
+            }
+            SettingsNote(text: "Some screens may need to be reopened to show the new accent.")
+            SettingsHeader(title: "Lyrics")
+            Toggle("Vazirmatn for Persian lyrics", isOn: $useVazirmatn)
+                .tint(Palette.accent).padding(.horizontal, Space.gutter).frame(minHeight: 56)
+            Toggle("Align Persian lyrics right", isOn: $alignPersianRight)
+                .tint(Palette.accent).padding(.horizontal, Space.gutter).frame(minHeight: 56)
+        }
     }
 }

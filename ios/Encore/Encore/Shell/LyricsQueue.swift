@@ -1,6 +1,14 @@
 // Lyrics card (under Now Playing), full-screen lyrics, and the queue screen.
 import SwiftUI
 
+private func hasArabicScript(_ text: String) -> Bool {
+    text.unicodeScalars.contains { scalar in
+        (0x0600...0x06ff).contains(scalar.value) || (0x0750...0x077f).contains(scalar.value) ||
+        (0x08a0...0x08ff).contains(scalar.value) || (0xfb50...0xfdff).contains(scalar.value) ||
+        (0xfe70...0xfeff).contains(scalar.value)
+    }
+}
+
 @MainActor @Observable
 final class LyricsModel {
     var lyrics: Lyrics?
@@ -48,6 +56,8 @@ final class LyricsModel {
 
 struct LyricsCard: View {
     @Environment(AppModel.self) private var app
+    @AppStorage("ztunes.lyrics.vazirmatn") private var useVazirmatn = true
+    @AppStorage("ztunes.lyrics.rtl") private var alignPersianRight = true
     let accent: UIColor?
     @State private var model = LyricsModel()
 
@@ -76,7 +86,10 @@ struct LyricsCard: View {
                 let window = lineWindow(active)
                 VStack(alignment: .leading, spacing: 6) {
                     ForEach(window, id: \.0) { i, line in
-                        Text(line.text).font(Typo.lyricsCard)
+                        Text(line.text).font(useVazirmatn && hasArabicScript(line.text) ? .custom("Vazirmatn-Bold", fixedSize: 22) : Typo.lyricsCard)
+                            .environment(\.layoutDirection, alignPersianRight && hasArabicScript(line.text) ? .rightToLeft : .leftToRight)
+                            .frame(maxWidth: .infinity, alignment: alignPersianRight && hasArabicScript(line.text) ? .trailing : .leading)
+                            .multilineTextAlignment(alignPersianRight && hasArabicScript(line.text) ? .trailing : .leading)
                             .foregroundStyle(lineColor(i, active))
                     }
                 }
@@ -114,6 +127,8 @@ func lineColor(_ i: Int, _ active: Int?) -> Color {
 
 struct LyricsFullView: View {
     @Environment(AppModel.self) private var app
+    @AppStorage("ztunes.lyrics.vazirmatn") private var useVazirmatn = true
+    @AppStorage("ztunes.lyrics.rtl") private var alignPersianRight = true
     let accent: UIColor?
     var insets = EdgeInsets()
     @State private var model = LyricsModel()
@@ -145,8 +160,10 @@ struct LyricsFullView: View {
                     // 26/700, 6 pt line spacing, 16 pt between lines, insets 24.
                     VStack(alignment: .leading, spacing: 16) {
                         ForEach(model.lines, id: \.0) { i, line in
-                            Text(line.text).font(Typo.lyricsFull).lineSpacing(6).foregroundStyle(lineColor(i, active))
-                                .frame(maxWidth: .infinity, alignment: .leading)
+                            Text(line.text).font(useVazirmatn && hasArabicScript(line.text) ? .custom("Vazirmatn-Bold", fixedSize: 26) : Typo.lyricsFull).lineSpacing(6).foregroundStyle(lineColor(i, active))
+                                .environment(\.layoutDirection, alignPersianRight && hasArabicScript(line.text) ? .rightToLeft : .leftToRight)
+                                .multilineTextAlignment(alignPersianRight && hasArabicScript(line.text) ? .trailing : .leading)
+                                .frame(maxWidth: .infinity, alignment: alignPersianRight && hasArabicScript(line.text) ? .trailing : .leading)
                                 .id(i)
                                 .accessibilityIdentifier(i == active ? "lyric-active" : "lyric-line")
                                 .accessibilityAddTraits(.isButton)

@@ -9,7 +9,7 @@ import SwiftUI
 /// scripts/brand/gen-brand.py ship.
 struct SpotlessMark: View {
     var size: CGFloat = 24
-    static let disc = Color(hex: "#FF2D7A") // gen-brand
+    static let disc = Color(hex: "#FF4B4B") // gen-brand
     static let ink = Color(hex: "#000000") // gen-brand
     static let discShare: CGFloat = 0.8 // gen-brand
     var body: some View {
@@ -394,7 +394,7 @@ struct DailyMixView: View {
     var body: some View {
         EntityScaffold(title: title, artURL: cover, isPlayingThis: playingThis, onPlay: onPlay) { off in
             EntityHeader(offset: off, cover: AnyView(ArtImage(url: cover, px: 720, radius: Radius.s)), title: title,
-                         owner: "Spotless", ownerArt: nil, ownerBadge: AnyView(SpotlessMark(size: 24)), meta: meta,
+                         owner: "Ztunes", ownerArt: nil, ownerBadge: AnyView(SpotlessMark(size: 24)), meta: meta,
                          description: subtitle, actions: AnyView(actionIcons), playing: playingThis && !app.player.paused,
                          onShuffle: { play(nil, shuffle: true) }, shuffleOn: playingThis && app.player.shuffle, onPlay: onPlay)
         } content: {
@@ -416,7 +416,7 @@ struct DailyMixView: View {
         .accessibilityIdentifier("mix-page")
         .task(id: "\(id)#\(attempt)") { await load() }
         .sheet(isPresented: $moreOpen) {
-            RadioMoreSheet(title: title, art: cover, subtitle: subtitle ?? "Spotless", rows: moreRows)
+            RadioMoreSheet(title: title, art: cover, subtitle: subtitle ?? "Ztunes", rows: moreRows)
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.visible)
                 .presentationBackground { SheetGlass() }

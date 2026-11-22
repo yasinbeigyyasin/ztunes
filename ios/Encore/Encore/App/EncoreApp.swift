@@ -187,7 +187,7 @@ struct CoreStartFailedView: View {
             Spacer()
             Icon(name: "info", fill: true, size: 56).foregroundStyle(Palette.subdued)
                 .padding(.bottom, Space.s)
-            Text("Spotless couldn't start").font(Typo.font(22, .bold)).multilineTextAlignment(.center)
+            Text("Ztunes couldn't start").font(Typo.font(22, .bold)).multilineTextAlignment(.center)
                 .accessibilityAddTraits(.isHeader)
                 .accessibilityIdentifier("core-failed-title")
             Text("Your library couldn't be opened. Try again. If it keeps happening, send the diagnostics so we can fix it.")
@@ -208,8 +208,8 @@ struct CoreStartFailedView: View {
             .disabled(retrying)
             .padding(.top, Space.l)
             .accessibilityIdentifier("core-retry")
-            ShareLink(item: Diagnostics.write(failure), subject: Text("Spotless diagnostics"),
-                      message: Text("Spotless couldn't start on my iPhone.")) {
+            ShareLink(item: Diagnostics.write(failure), subject: Text("Ztunes diagnostics"),
+                      message: Text("Ztunes couldn't start on my iPhone.")) {
                 Text("Send diagnostics").font(Typo.font(15, .bold)).foregroundStyle(Palette.text)
                     .padding(.horizontal, 24).frame(height: 44).overlay(Capsule().stroke(Palette.dim))
             }

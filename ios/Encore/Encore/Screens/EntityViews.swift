@@ -337,7 +337,7 @@ struct PlaylistView: View {
                            Haptics.impact(.light)
                        }) { off in
             EntityHeader(offset: off, cover: AnyView(cover), title: page?.title ?? " ",
-                         owner: isMfy ? "Spotless" : isLiked || page?.owned == true ? app.localUser : ownerName, ownerArt: nil,
+                         owner: isMfy ? "Ztunes" : isLiked || page?.owned == true ? app.localUser : ownerName, ownerArt: nil,
                          ownerBadge: isMfy ? AnyView(SpotlessMark(size: 24))
                             : (isLiked || page?.owned == true) ? AnyView(Avatar(size: 24, opensMenu: false)) : nil,
                          meta: isMfy ? "Made for \(app.localUser) • " + meta : meta, description: isLiked ? nil : page?.description,

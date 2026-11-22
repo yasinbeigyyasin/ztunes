@@ -1,5 +1,5 @@
 // Share (Spotify iOS: Share in every sheet and in Now Playing → the system share sheet).
-// The shared item is the music.youtube.com link, which opens for anyone; a "Copy Spotless link"
+// The shared item is the music.youtube.com link, which opens for anyone; a "Copy Ztunes link"
 // activity copies the spotless:// link, which opens the same screen in Spotless (Links.swift).
 import SwiftUI
 import UIKit
@@ -65,12 +65,12 @@ final class ShareItemSource: NSObject, UIActivityItemSource {
     func activityViewController(_ c: UIActivityViewController, subjectForActivityType t: UIActivity.ActivityType?) -> String { title }
 }
 
-/// "Copy Spotless link": the spotless:// link to the same screen.
+/// "Copy Ztunes link": the spotless:// link to the same screen.
 final class CopyEncoreLinkActivity: UIActivity {
     let link: URL
     init(link: URL) { self.link = link }
     override var activityType: UIActivity.ActivityType? { .init("app.spotlessmusic.ios.copy-link") }
-    override var activityTitle: String? { "Copy Spotless link" }
+    override var activityTitle: String? { "Copy Ztunes link" }
     override var activityImage: UIImage? { UIImage(systemName: "link") }
     override class var activityCategory: UIActivity.Category { .action }
     override func canPerform(withActivityItems items: [Any]) -> Bool { true }

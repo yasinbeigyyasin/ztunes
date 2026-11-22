@@ -552,7 +552,7 @@ private struct ImportExportStep: View {
                         .buttonStyle(PressScale())
                         .accessibilityIdentifier("import-open-spotify")
                     }
-                    step(2, "Wait for the email", "It usually takes a few days. You can close Spotless meanwhile.", last: false) { EmptyView() }
+                    step(2, "Wait for the email", "It usually takes a few days. You can close Ztunes meanwhile.", last: false) { EmptyView() }
                     step(3, "Choose the file", "Save my_spotify_data.zip from the email to Files, then choose it below.", last: true) { EmptyView() }
                 }
                 if let e = flow.error {

@@ -173,12 +173,12 @@ enum DeviceSyncText {
     static let errorLine = "Can't reach your other device or the sync service right now. Changes will go through when it's back."
     static let unlinkMessage = "Your devices stop syncing. Everything stays on both devices."
     static let introTitle = "Link your \(other)"
-    static let introBody = "Open Spotless on your \(other) and go to Settings › Devices › Link a device. Then show a code on one device and enter it on the other."
-    static let localNetworkLine = "Spotless will ask to find devices on your local network. Allow it so your devices can link."
+    static let introBody = "Open Ztunes on your \(other) and go to Settings › Devices › Link a device. Then show a code on one device and enter it on the other."
+    static let localNetworkLine = "Ztunes will ask to find devices on your local network. Allow it so your devices can link."
     static let successBody = "Everything now stays in sync between your devices: library, playlists, history, podcasts and settings. Downloads stay on each device."
-    static let welcomeTitle = "Using Spotless on your \(other) too?"
+    static let welcomeTitle = "Using Ztunes on your \(other) too?"
     static let welcomeLine = "Link them to keep everything in sync."
-    static let hint = "Have Spotless on your \(other)? Link it to keep everything in sync."
+    static let hint = "Have Ztunes on your \(other)? Link it to keep everything in sync."
 
     /// "A", "A and B", "A, B and 2 more".
     static func names(_ names: [String]) -> String {
@@ -242,7 +242,7 @@ struct PairingError: Equatable {
     var message: String
 
     static let localNetwork = PairingError(kind: .localNetwork,
-                                           message: "Spotless can't reach your local network. Allow it in Settings › Spotless › Local Network.")
+                                           message: "Ztunes can't reach your local network. Allow it in Settings › Ztunes › Local Network.")
     static let unreachable = PairingError(kind: .unreachable, message: "Your devices can't see each other. Make sure both are on the same Wi-Fi.")
 
     /// The core's error (`wrong_code:2`, `not_pairing`, `no_host`, an io error) as a sentence.

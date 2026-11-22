@@ -45,12 +45,12 @@ private struct AccountSettings: View {
             ProfileAvatar(size: 48)
             VStack(alignment: .leading, spacing: 3) {
                 Text(app.localUser).font(Typo.font(16, .bold))
-                Text(store.signedIn ? "Signed in to YouTube Music" : "Local profile")
+                Text(store.signedIn ? "Connected with Google" : "Local profile")
                     .font(Typo.font(13)).foregroundStyle(Palette.subdued)
             }
         }
         .padding(.horizontal, Space.gutter).padding(.vertical, Space.s)
-        SettingsNote(text: "Spotless works without an account. Your library, likes and history are stored on this iPhone.")
+        SettingsNote(text: "Ztunes works without an account. Your library, likes and history are stored on this iPhone.")
         SettingsHeader(title: "YouTube account")
         if store.signedIn {
             HStack(spacing: Space.m) {
@@ -66,7 +66,7 @@ private struct AccountSettings: View {
             .padding(.horizontal, Space.gutter).frame(minHeight: 56)
             .accessibilityElement(children: .combine)
             .accessibilityIdentifier("youtube-account")
-            SettingsNote(text: "Your YouTube Music likes, playlists and subscriptions work here. Sign out to go back to this iPhone's library only.")
+            SettingsNote(text: "Your connected likes, playlists and subscriptions work here. Sign out to go back to this iPhone's library only.")
             pill("Sign out", id: "youtube-signout") { confirmSignOut = true }
         } else if a.signedIn && a.selectionRequired == true {
             SettingsNote(text: "Signed in to Google. Pick which YouTube channel to use.")
@@ -74,8 +74,8 @@ private struct AccountSettings: View {
                 Task { store.identities = (try? await app.core.asAccount?.accountIdentities()) ?? []; store.signInOpen = true }
             }
         } else {
-            SettingsNote(text: "Optional. Sign in to bring your YouTube Music likes, playlists and subscriptions. You sign in on Google's own page; Spotless never sees your password.")
-            pill("Sign in to YouTube Music", id: "youtube-signin") { store.signInOpen = true }
+            SettingsNote(text: "Optional. Sign in to bring your YouTube Music likes, playlists and subscriptions. You sign in on Google's own page; Ztunes never sees your password.")
+            pill("Connect Google account", id: "youtube-signin") { store.signInOpen = true }
         }
         SettingsHeader(title: "Import and export")
         SettingsNavRow(icon: "download-simple", title: "Import from Spotify", subtitle: "Playlists, Liked Songs and listening history") {
@@ -203,7 +203,7 @@ private struct PrivacySettings: View {
         SettingsToggleRow(title: "Private session", subtitle: "Plays in a private session don't shape your Home, Made for you or Recently played.",
                           isOn: Binding(get: { s.smart.privateSession }, set: { s.setPrivateSession($0) }))
         SettingsHeader(title: "Listening history")
-        SettingsNote(text: "Your listening history stays on this iPhone. Spotless uses it only to build Home, Made for you and Smart Shuffle; nothing is sent anywhere.")
+        SettingsNote(text: "Your listening history stays on this iPhone. Ztunes uses it only to build Home, Made for you and Smart Shuffle; nothing is sent anywhere.")
         SettingsNavRow(icon: "clock-counter-clockwise", title: "Recents", subtitle: "What you've played lately, and your top artists") {
             app.router.push(.history)
         }
@@ -396,6 +396,7 @@ private struct AboutSettings: View {
         ("iTunes Search API", "Podcast directory"),
         ("Phosphor Icons", "Icons (MIT)"),
         ("Figtree", "Typeface (OFL)"),
+        ("Vazirmatn", "Persian typeface (SIL OFL 1.1)"),
         ("swift-snapshot-testing", "Screen tests (MIT)"),
     ]
 
@@ -406,8 +407,11 @@ private struct AboutSettings: View {
             Text(version).font(Typo.font(14)).foregroundStyle(Palette.subdued)
         }
         .padding(.horizontal, Space.gutter).frame(minHeight: 56)
-        SettingsNote(text: "Spotless is free and open source software under the GPL-3.0. No ads, no account.")
+        SettingsNote(text: "Ztunes is free and open source software under the GPL-3.0.")
         SettingsHeader(title: "Credits")
+        SettingsNote(text: "Developer: Yasin Beigy")
+        SettingsNote(text: "Designer: Yasin Beigy")
+        SettingsHeader(title: "Third-party notices")
         ForEach(credits, id: \.0) { name, what in
             VStack(alignment: .leading, spacing: 3) {
                 Text(name).font(Typo.font(16))

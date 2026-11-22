@@ -213,9 +213,9 @@ struct YouTubeSignInSheet: View {
         let store = app.account
         VStack(spacing: 0) {
             ZStack {
-                Text(store.identities.isEmpty ? "Sign in to YouTube Music" : "Choose a channel").font(Typo.font(16, .bold))
+                Text(store.identities.isEmpty ? "Connect to Ztunes" : "Choose a channel").font(Typo.font(16, .bold))
                 HStack {
-                    Button("Cancel") { dismiss() }.font(Typo.font(15)).accessibilityIdentifier("signin-cancel")
+                    Button("Cancel") { dismiss() }.font(Typo.font(15)).foregroundStyle(Palette.accentText).accessibilityIdentifier("signin-cancel")
                     Spacer()
                     if loading || store.busy { ProgressView().tint(Palette.subdued) }
                 }
@@ -263,7 +263,7 @@ private struct ChannelPicker: View {
     var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 0) {
-                SettingsNote(text: "This Google account has more than one YouTube channel. Pick the one Spotless should use.")
+                SettingsNote(text: "This Google account has more than one YouTube channel. Pick the one Ztunes should use.")
                     .padding(.vertical, Space.s)
                 ForEach(app.account.identities) { idn in
                     Button {

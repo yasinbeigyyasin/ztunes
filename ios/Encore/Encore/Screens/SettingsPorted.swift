@@ -42,7 +42,7 @@ struct PodcastsSettings: View {
         SettingsToggleRow(title: "Play as audio only", subtitle: "Video podcasts start without the picture. You can still switch to video in Now Playing.",
                           isOn: Binding(get: { s.bool(SettingKey.podcastAudioOnly) }, set: { s.set(SettingKey.podcastAudioOnly, $0) }))
         SettingsHeader(title: "Your shows")
-        SettingsNote(text: "Move the podcasts you follow between Spotless and other podcast apps with an OPML file.")
+        SettingsNote(text: "Move the podcasts you follow between Ztunes and other podcast apps with an OPML file.")
         HStack(spacing: Space.s) {
             SettingsPill(title: "Import OPML", id: "opml-import") { importing = true }
             SettingsPill(title: "Export OPML", id: "opml-export") { exportOpml() }
@@ -91,7 +91,7 @@ struct PodcastsSettings: View {
         Task {
             do {
                 let xml = try await app.core.podcastOpmlExport()
-                let url = FileManager.default.temporaryDirectory.appendingPathComponent("Spotless Podcasts.opml")
+                let url = FileManager.default.temporaryDirectory.appendingPathComponent("Ztunes Podcasts.opml")
                 try Data(xml.utf8).write(to: url, options: .atomic)
                 ShareSheet.presentFile(url)
             } catch { app.showToast("Couldn't export your podcasts") }
@@ -114,7 +114,7 @@ struct ExportLibraryRow: View {
             Task {
                 defer { busy = false }
                 let day = ISO8601DateFormatter.string(from: Date(), timeZone: .current, formatOptions: [.withFullDate])
-                let url = FileManager.default.temporaryDirectory.appendingPathComponent("Spotless Library \(day).zip")
+                let url = FileManager.default.temporaryDirectory.appendingPathComponent("Ztunes Library \(day).zip")
                 try? FileManager.default.removeItem(at: url)
                 do {
                     let r = try await app.core.libExport(path: url.path)

@@ -4,6 +4,7 @@ import SwiftUI
 
 struct RootView: View {
     @Environment(AppModel.self) private var app
+    @AppStorage("ztunes.accent") private var ztAccent = "red"
 
     var body: some View {
         @Bindable var app = app
@@ -69,6 +70,7 @@ struct RootView: View {
         } message: { c in
             if let m = c.message { Text(m) }
         }
+        .tint(Palette.accent(for: ztAccent))
         .preferredColorScheme(.dark)
         // Like Spotify, the app's type is fixed-size (Typo uses fixedSize fonts); system text inside
         // it stops growing at xxxLarge so rows and sheets keep their layout.
