@@ -1,9 +1,12 @@
 # Android MVP is experimental. The debug APK is signed with an ephemeral CI debug key.
 name: Build Ztunes Android MVP
+
 on:
   workflow_dispatch:
+
 permissions:
   contents: read
+
 jobs:
   android:
     runs-on: ubuntu-24.04
@@ -11,38 +14,54 @@ jobs:
     env:
       CARGO_BUILD_JOBS: 2
       MPV_ANDROID_DIR: ${{ github.workspace }}/.android-mpv
+
     steps:
       - uses: actions/checkout@v4
+
       - name: Install Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
+
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+        with:
+          accept-android-sdk-licenses: true
+          packages: platform-tools
+
       - name: Install Android components
         run: sdkmanager 'platforms;android-35' 'build-tools;35.0.0' 'ndk;27.2.12479018'
+
       - name: Set NDK path
         run: echo "ANDROID_NDK_HOME=$ANDROID_HOME/ndk/27.2.12479018" >> "$GITHUB_ENV"
+
       - uses: dtolnay/rust-toolchain@stable
         with:
           targets: aarch64-linux-android
+
       - name: Install native build dependencies
         run: sudo apt-get update && sudo apt-get install -y libclang-dev pkg-config
+
       - name: Install cargo-ndk
         run: cargo install cargo-ndk --version 4.1.2 --locked
+
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+
       - uses: pnpm/action-setup@v4
         with:
           version: 10.8.1
           run_install: false
+
       - name: Build full Android WebView UI
         run: bash android/scripts/build-web-ui.sh
+
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.7'
+
       - name: Fetch pinned third-party Android libmpv
         run: |
           set -euo pipefail
@@ -50,10 +69,13 @@ jobs:
           echo '4363dfa5d3d415b91c1f16f6fb90c3fe59a77dfd3f9b824d2b24b492d6b09df9  /tmp/mpv.jar' | sha256sum -c -
           mkdir -p "$MPV_ANDROID_DIR/arm64-v8a"
           unzip -p /tmp/mpv.jar lib/arm64-v8a/libmpv.so > "$MPV_ANDROID_DIR/arm64-v8a/libmpv.so"
+
       - name: Build native core and generate Android bindings
         run: bash android/scripts/build-native.sh
+
       - name: Build debug APK
         run: gradle -p android assembleDebug --no-daemon --stacktrace
+
       - uses: actions/upload-artifact@v4
         with:
           name: Ztunes-Android-MVP-debug
