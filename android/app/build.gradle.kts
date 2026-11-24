@@ -14,7 +14,7 @@ android {
     }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
     kotlinOptions { jvmTarget = "17" }
-    sourceSets["main"].java.srcDir("src/main/generated")
+    sourceSets["main"].assets.setSrcDirs(listOf(file("src/main/assets")))
     // Package the full SvelteKit app, built with Android's Tauri-compatible host shims.
     sourceSets["main"].assets.setSrcDirs(listOf(file("../../ui/build")))
 }
