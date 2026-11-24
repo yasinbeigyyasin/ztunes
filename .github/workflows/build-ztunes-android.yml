@@ -58,6 +58,14 @@ jobs:
       - name: Build full Android WebView UI
         run: bash android/scripts/build-web-ui.sh
 
+      - name: Stage WebView UI for Android
+        run: |
+          set -euo pipefail
+          mkdir -p android/app/src/main/assets
+          cp -a ui/build/. android/app/src/main/assets/
+          test -f android/app/src/main/assets/index.html
+          test -n "$(find android/app/src/main/assets/_app/immutable/entry -maxdepth 1 -type f -name 'start.*.js' -print -quit)"
+
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '8.7'
@@ -75,6 +83,13 @@ jobs:
 
       - name: Build debug APK
         run: gradle -p android assembleDebug --no-daemon --stacktrace
+
+      - name: Verify APK contains WebView assets
+        run: |
+          set -euo pipefail
+          APK=android/app/build/outputs/apk/debug/app-debug.apk
+          unzip -Z1 "$APK" | grep -Fx 'assets/index.html'
+          unzip -Z1 "$APK" | grep -E '^assets/_app/immutable/entry/start\.[^/]+\.js$'
 
       - uses: actions/upload-artifact@v4
         with:
