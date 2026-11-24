@@ -3,6 +3,20 @@
 @import "shadcn-svelte/tailwind.css";
 @import "@fontsource-variable/figtree";
 
+/* Persian/Arabic-script lyrics: bundled locally, never fetched from a font service.
+   The unicode range leaves Latin glyphs in the app's regular Figtree font. */
+@font-face {
+    font-family: "Ztunes Vazirmatn";
+    src: url('../lib/assets/fonts/Vazirmatn-Variable.woff2') format('woff2');
+    font-style: normal;
+    font-weight: 100 900;
+    font-display: swap;
+    unicode-range: U+0600-06FF, U+0750-077F, U+0870-089F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+}
+.zt-lyrics {
+    font-family: "Ztunes Vazirmatn", "Figtree Variable", "Figtree", sans-serif;
+}
+
 /* ============================================================================================
    Spotless design system: one Spotify-dark token set (docs/spotify-spec/theme.css + tokens.json).
    There are no themes and no light mode. `<html class="dark">` is fixed in app.html.
@@ -96,11 +110,11 @@
 	   these. Hover = 12% toward white, press = 12% toward black. Black text sits on it (≈5.9:1;
 	   white would be ≈3.6:1). As text on #121212 the base is ≈5.3:1, but on raised surfaces
 	   (#1f1f1f/#282828) it drops toward 4:1, so words in the accent use --color-accent-text. */
-	--color-accent: #ff2d7a;
-	--color-accent-hover: #ff468a;
-	--color-accent-press: #e0286b;
-	--color-accent-text: #ff4f8f;
-	--color-accent-tile: #5a0e30;
+	--color-accent: #ff4b4b;
+	--color-accent-hover: #ff6969;
+	--color-accent-press: #df3636;
+	--color-accent-text: #ff7171;
+	--color-accent-tile: #511719;
 	--color-negative: #ed2c3f;
 	--color-warning: #ffa42b;
 	--color-announcement: #1278f2;
@@ -833,4 +847,277 @@ input[type='range'].range:focus-visible::-webkit-slider-thumb {
    broken-image glyph; its slot's placeholder background shows instead (lib/imgguard.ts). */
 img[data-img-broken] {
 	visibility: hidden;
+}
+
+/* Ztunes optional reduced motion (independent of the operating-system preference). */
+:root[data-reduce-motion='true'] *,
+:root[data-reduce-motion='true'] *::before,
+:root[data-reduce-motion='true'] *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+}
+
+/* Android WebView shell: the shared Ztunes Svelte screens, laid out like a phone app (iPhone's
+   Home / Search / Library tabs, floating mini-player, Figtree type, and the common Windows tokens). */
+html,
+body {
+	height: 100%;
+	width: 100%;
+	margin: 0;
+	overflow: hidden;
+}
+
+.android-shell {
+	position: fixed;
+	inset: 0;
+	z-index: 0;
+	display: flex;
+	width: 100%;
+	height: 100%;
+	height: 100dvh;
+	min-height: 0;
+	flex-direction: column;
+	overflow: hidden;
+	background: var(--color-bg-app);
+	color: var(--color-text-base);
+	--content-spacing: 16px;
+	--spacing-home-gutter: 16px;
+}
+
+.android-topbar {
+	z-index: 2;
+	display: flex;
+	flex: 0 0 56px;
+	align-items: center;
+	gap: 12px;
+	padding: 0 16px;
+	background: var(--color-bg-app);
+}
+
+.android-brand {
+	display: inline-flex;
+	min-width: 0;
+	align-items: center;
+	gap: 9px;
+	color: #fff;
+	font-size: 18px;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+	text-decoration: none;
+}
+
+.android-brand svg {
+	flex: 0 0 auto;
+}
+
+.android-header-back,
+.android-header-action {
+	display: grid;
+	width: 40px;
+	height: 40px;
+	flex: 0 0 40px;
+	place-items: center;
+	border: 0;
+	border-radius: 999px;
+	background: transparent;
+	color: var(--color-text-subdued);
+}
+
+.android-header-back:active,
+.android-header-action:active {
+	background: var(--color-bg-tinted);
+	color: #fff;
+}
+
+.android-header-title {
+	min-width: 0;
+	overflow: hidden;
+	color: #fff;
+	font-size: 18px;
+	font-weight: 700;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.android-header-spacer {
+	flex: 1 1 auto;
+}
+
+.android-main {
+	position: relative;
+	min-height: 0;
+	flex: 1 1 auto;
+	overflow-x: hidden;
+	overflow-y: auto;
+	overscroll-behavior: contain;
+	-webkit-overflow-scrolling: touch;
+	border-radius: 16px 16px 0 0;
+	background: var(--color-bg-base);
+	outline: none;
+	scrollbar-width: none;
+}
+
+.android-main::-webkit-scrollbar {
+	display: none;
+}
+
+.android-main [data-main-scroll] {
+	scrollbar-width: none;
+}
+
+.android-mini-player {
+	position: relative;
+	display: flex;
+	min-height: 56px;
+	flex: 0 0 56px;
+	align-items: center;
+	gap: 8px;
+	margin: 8px 8px 2px;
+	padding: 0 6px 0 8px;
+	overflow: hidden;
+	border-radius: 8px;
+	background: #3a3a3a;
+	color: #fff;
+}
+
+.android-mini-art {
+	display: grid;
+	width: 40px;
+	height: 40px;
+	flex: 0 0 40px;
+	place-items: center;
+	overflow: hidden;
+	border: 0;
+	border-radius: 4px;
+	background: #282828;
+	color: #b3b3b3;
+}
+
+.android-mini-art img {
+	width: 100%;
+	height: 100%;
+	object-fit: cover;
+}
+
+.android-mini-meta {
+	display: flex;
+	min-width: 0;
+	flex: 1 1 auto;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+	gap: 2px;
+	overflow: hidden;
+	border: 0;
+	background: transparent;
+	color: inherit;
+	text-align: left;
+}
+
+.android-mini-meta strong,
+.android-mini-meta span {
+	width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.android-mini-meta strong {
+	font-size: 14px;
+	font-weight: 700;
+}
+
+.android-mini-meta span {
+	color: rgb(255 255 255 / 0.72);
+	font-size: 12px;
+}
+
+.android-mini-control {
+	display: grid;
+	width: 42px;
+	height: 44px;
+	flex: 0 0 42px;
+	place-items: center;
+	border: 0;
+	border-radius: 999px;
+	background: transparent;
+	color: #fff;
+}
+
+.android-mini-control:active {
+	background: rgb(255 255 255 / 0.12);
+}
+
+.android-mini-progress {
+	position: absolute;
+	right: 8px;
+	bottom: 0;
+	left: 8px;
+	height: 2px;
+	background: rgb(255 255 255 / 0.22);
+}
+
+.android-mini-progress span {
+	display: block;
+	height: 100%;
+	background: #fff;
+}
+
+.android-spinner {
+	width: 18px;
+	height: 18px;
+	border: 2px solid rgb(255 255 255 / 0.28);
+	border-top-color: #fff;
+	border-radius: 50%;
+	animation: android-spin 0.8s linear infinite;
+}
+
+@keyframes android-spin {
+	to { transform: rotate(360deg); }
+}
+
+.android-tabbar {
+	z-index: 2;
+	display: grid;
+	min-height: 62px;
+	flex: 0 0 auto;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	align-items: center;
+	padding: 3px 6px calc(4px + env(safe-area-inset-bottom));
+	background: #000;
+}
+
+.android-tabbar button {
+	display: flex;
+	min-width: 0;
+	min-height: 52px;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 3px;
+	border: 0;
+	border-radius: 10px;
+	background: transparent;
+	color: #b3b3b3;
+	font-family: inherit;
+	font-size: 10px;
+	font-weight: 500;
+}
+
+.android-tabbar button.active {
+	color: #fff;
+}
+
+.android-tabbar button:active {
+	background: rgb(255 255 255 / 0.08);
+}
+
+@media (min-width: 720px) {
+	.android-shell {
+		max-width: 720px;
+		margin-inline: auto;
+		border-inline: 1px solid rgb(255 255 255 / 0.06);
+	}
 }

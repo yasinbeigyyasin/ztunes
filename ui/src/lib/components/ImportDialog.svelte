@@ -525,7 +525,7 @@
 					{#each job.results as r (r.id)}
 						<div class="flex h-16 items-center gap-3 rounded-sm px-2 hover:bg-bg-tinted">
 							{#if r.id === api.LIKED_ID}
-								<div class="grid size-12 shrink-0 place-items-center rounded-sm bg-[linear-gradient(135deg,#ff2d7a,#6a1b9a)] text-white"><Icon icon={HeartIcon} size={20} fill /></div>
+								<div class="grid size-12 shrink-0 place-items-center rounded-sm bg-[linear-gradient(135deg,#ff4b4b,#6a1b9a)] text-white"><Icon icon={HeartIcon} size={20} fill /></div>
 							{:else if r.kind === 'history'}
 								<div class="grid size-12 shrink-0 place-items-center rounded-sm bg-bg-elevated-highlight text-white"><Icon icon={ClockCounterClockwiseIcon} size={20} /></div>
 							{:else}

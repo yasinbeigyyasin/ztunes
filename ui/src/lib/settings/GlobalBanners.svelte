@@ -9,7 +9,7 @@
 	 * - Settings › Display "Open Now Playing view on play": opens the right panel when a new queue
 	 *   starts.
 	 * - The legacy `ui.settingsOpen` flag is routed to the page.
-	 * - The first-run "Bring your music from Spotify" step, then "Using Spotless on your iPhone too?".
+	 * - The first-run "Bring your music from Spotify" step, then "Using Ztunes on your iPhone too?".
  * - The device-linking dialog (devices.svelte.ts opens it from anywhere).
 	 */
 	import { onMount } from 'svelte';
@@ -139,7 +139,7 @@
 		<Icon icon={WarningCircleIcon} size={24} fill />
 		<span class="min-w-0">
 			<span class="font-bold">Playback isn't working right now.</span>
-			A Spotless update may fix it.
+			A Ztunes update may fix it.
 		</span>
 		<button
 			type="button"

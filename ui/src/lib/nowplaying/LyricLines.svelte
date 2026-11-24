@@ -134,7 +134,7 @@
 			</p>
 		</div>
 	{:else}
-		<div class="max-w-[963px] pt-24 pb-[50vh] font-bold {size}">
+		<div class="zt-lyrics max-w-[963px] pt-24 pb-[50vh] font-bold {size}">
 			{#if !synced}
 				<p class="mb-8 text-base font-normal tracking-normal" style="color:{lineColour}">
 					These lyrics aren't synced to the song yet.
@@ -147,7 +147,8 @@
 					<button
 						type="button"
 						data-line={i}
-						class="block w-full py-3 text-left transition-[color,opacity] duration-100 ease-out hover:!text-white hover:!opacity-100 {l.text.trim()
+                        dir="auto"
+						class="block w-full py-3 text-start transition-[color,opacity] duration-100 ease-out hover:!text-white hover:!opacity-100 {l.text.trim()
 							? ''
 							: 'h-[82px]'}"
 						style="color:{isActive || isPast ? '#fff' : lineColour};opacity:{isPast ? 0.6 : 1}"
@@ -163,7 +164,7 @@
 						{/if}
 					</button>
 				{:else}
-					<p class="py-3 text-white">{l.text || ' '}</p>
+					<p dir="auto" class="py-3 text-start text-white">{l.text || ' '}</p>
 				{/if}
 			{/each}
 			<p class="mt-10 text-xs font-normal tracking-normal text-text-subdued">{attribution(lyrics)}</p>

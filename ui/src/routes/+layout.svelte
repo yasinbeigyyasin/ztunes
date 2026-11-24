@@ -10,12 +10,15 @@
 	import { onMount } from 'svelte';
 	import { getCurrentWindow } from '@tauri-apps/api/window';
 	import { Tooltip } from 'bits-ui';
-	import { initTheme } from '$lib/theme.svelte';
+	import { appearance, initTheme } from '$lib/theme.svelte';
 	import { blockForeignDrag, dragScroll } from '$lib/dnd';
 	import { suppressNative } from '$lib/menu';
 	import LinkDialog from '$lib/components/LinkDialog.svelte';
 	import { handleImportDrop, imp, initImport } from '$lib/import.svelte';
 	import VideoSurface from '$lib/components/VideoSurface.svelte';
+	import AndroidShell from '$lib/shell/AndroidShell.svelte';
+	import { listen as listenTauri } from '@tauri-apps/api/event';
+	import { ready as androidReady } from '$lib/platform/android/host';
 	import { auth, initApp, playback, ui } from '$lib/player.svelte';
 	import { initWin } from '$lib/win.svelte';
 	import { initDevices } from '$lib/devices.svelte';
@@ -131,22 +134,23 @@
 			return false;
 		}
 	})();
+	const isAndroid = browser && (window as any).__ZTUNES_ANDROID__ === true;
 
 	if (browser) initTheme();
 
 	// Main panel gutter: clamp(16px, 16px + (w - 600px) / 424 * 8, 24px) — shell-layout.md.
 	let mainWidth = $state(800);
-	const contentSpacing = $derived(Math.min(24, Math.max(16, 16 + ((mainWidth - 600) / 424) * 8)));
+	const contentSpacing = $derived(appearance.compactLayout ? 12 : Math.min(24, Math.max(16, 16 + ((mainWidth - 600) / 424) * 8)));
 
 	// Window title: "Track • Artist" while playing.
 	$effect(() => {
 		const n = playback.now;
-		document.title = n && !playback.paused ? `${n.title} • ${n.artists}` : 'Spotless';
+		document.title = n && !playback.paused ? `${n.title} • ${n.artists}` : 'Ztunes';
 	});
 
 	onMount(() => {
 		const mountedAt = performance.now(); // stream: perf
-		initErrorLog();
+		if (!isAndroid) initErrorLog();
 		installImageGuard(); // stream: tilefix
 		if (isMini) {
 			const a = initApp(true);
@@ -154,6 +158,28 @@
 			return () => {
 				a();
 				k();
+			};
+		}
+		if (isAndroid) {
+			let startedAndroid = false;
+			let teardownApp: (() => void) | undefined;
+			let teardownDevices: (() => void) | undefined;
+			const stopCoreListener = listenTauri('android-core-ready', () => {
+				if (startedAndroid) return;
+				startedAndroid = true;
+				initErrorLog();
+				teardownApp = initApp();
+				teardownDevices = initDevices();
+				initImport();
+				initAudio().catch(() => {});
+				initPodcasts().catch(() => {});
+				reloadSavedBooks().catch(() => {});
+			});
+			androidReady();
+			return () => {
+				stopCoreListener.then((unlisten) => unlisten());
+				teardownDevices?.();
+				teardownApp?.();
 			};
 		}
 		const teardownWin = initWin();
@@ -246,6 +272,9 @@
 	{#await import('$lib/components/MiniPlayer.svelte') then m}<m.default />{/await}
 {:else}
 	<Tooltip.Provider delayDuration={500} skipDelayDuration={300} disableHoverableContent>
+	{#if isAndroid}
+		<AndroidShell>{@render children()}</AndroidShell>
+	{:else}
 		<div
 			data-app-shell
 			class="grid h-screen w-screen overflow-hidden bg-bg-app px-2 pb-2 text-white {shell.resizing
@@ -331,6 +360,7 @@
 				<!-- Owns the one <video> element; renders a zero-size parking box until borrowed. -->
 				<VideoSurface />
 		</div>
+	{/if}
 
 		{#if ui.theaterOpen && playback.now}
 			{#await lazyDialogs.theater() then m}<m.default />{/await}

@@ -200,7 +200,7 @@
 		{title}
 		image={art}
 		description={radio?.description}
-		owner={{ name: 'Spotless', logo: true }}
+		owner={{ name: 'Ztunes', logo: true }}
 		{details}
 		bind:tintOut={tint}
 	>

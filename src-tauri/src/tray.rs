@@ -142,7 +142,7 @@ mod imp {
 
     pub fn init(app: &AppHandle) -> tauri::Result<()> {
         let now_playing = MenuItem::with_id(app, "now_playing", "Nothing playing", false, None::<&str>)?;
-        let show = MenuItem::with_id(app, "show", "Show Spotless", true, None::<&str>)?;
+        let show = MenuItem::with_id(app, "show", "Show Ztunes", true, None::<&str>)?;
         let play_pause = MenuItem::with_id(app, "play_pause", "Play", true, None::<&str>)?;
         let next = MenuItem::with_id(app, "next", "Next", true, None::<&str>)?;
         let prev = MenuItem::with_id(app, "prev", "Previous", true, None::<&str>)?;
@@ -169,7 +169,7 @@ mod imp {
         let mut builder = TrayIconBuilder::with_id("main")
             .menu(&menu)
             .show_menu_on_left_click(false)
-            .tooltip("Spotless")
+            .tooltip("Ztunes")
             .on_menu_event(|app, event| handle_menu(app, event.id.as_ref()))
             .on_tray_icon_event(|tray, event| {
                 if let TrayIconEvent::DoubleClick { button: MouseButton::Left, .. } = event {

@@ -1050,6 +1050,9 @@ export const onAuthChanged = (cb: (a: Account) => void): Promise<UnlistenFn> =>
 	listen<Account>('auth-changed', (e) => cb(e.payload));
 export const onAccountSelectionRequired = (cb: () => void): Promise<UnlistenFn> =>
 	listen('account-selection-required', () => cb());
+/** The YouTube session was rejected; the user must import a fresh browser session. */
+export const onSessionRejected = (cb: () => void): Promise<UnlistenFn> =>
+	listen('session-rejected', () => cb());
 /**
  * Local music disappeared from disk. Fired when a play attempt finds nothing there, carrying the
  * song (and album, if that emptied it) so every view holding those ids can drop them at once.
@@ -1060,7 +1063,7 @@ export const onLoginError = (cb: (msg: string) => void): Promise<UnlistenFn> =>
 	listen<string>('login-error', (e) => cb(e.payload));
 export const onLoginDone = (cb: () => void): Promise<UnlistenFn> =>
 	listen('login-done', () => cb());
-/** The user closed the Google sign-in window before signing in. */
+/** The user closed the host sign-in UI before signing in. */
 export const onLoginCancelled = (cb: () => void): Promise<UnlistenFn> =>
 	listen('login-cancelled', () => cb());
 

@@ -5,6 +5,6 @@
 	let { size = 232 }: { size?: number } = $props();
 </script>
 
-<div class="grid size-full place-items-center bg-[linear-gradient(135deg,#ff2d7a,#6a1b9a)] text-white">
+<div class="grid size-full place-items-center bg-[linear-gradient(135deg,#ff4b4b,#6a1b9a)] text-white">
 	<Icon icon={HeartIcon} size={Math.round(size * 0.4)} fill />
 </div>

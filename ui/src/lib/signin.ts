@@ -3,7 +3,7 @@
 
 export type SignInPhase =
 	| { kind: 'idle' }
-	| { kind: 'waiting' } // the Google window is open; Spotless isn't signed in yet
+	| { kind: 'waiting' } // host sign-in UI is open; Ztunes isn't signed in yet
 	| { kind: 'failed'; message: string };
 
 export type SignInEvent =

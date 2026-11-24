@@ -3,15 +3,17 @@
 	 * Settings (spotify-spec/screens/settings.md, ref/settings.jpg, audit 32): a main-view page.
 	 * Title "Settings" 32/700 with a search button on the right that filters rows; sections with
 	 * 16/700 headings; rows = 14px #b3b3b3 label left, control right (accent switches, #1f1f1f
-	 * selects, outline pills). Spotify's section order, mapped onto Spotless's real settings.
+	 * selects, outline pills). Spotify's section order, mapped onto Ztunes's real settings.
 	 * Opened from the avatar menu, ⌘, and menu://preferences (shell/settings.ts → goto('/settings')).
 	 */
 	import { onMount, tick } from 'svelte';
+	import { goto } from '$app/navigation';
 	import { getVersion } from '@tauri-apps/api/app';
 	import { open as pickFolder } from '@tauri-apps/plugin-dialog';
 	import * as api from '$lib/api';
 	import { auth, local, scanLocal, addLocalFolder, removeLocalFolder, prefs, setAutoplay, startSignIn } from '$lib/player.svelte';
 	import { lib } from '$lib/library.svelte';
+	import { isAndroidHost } from '$lib/platform/android/host';
 	import {
 		downloads,
 		moveDownloads,
@@ -63,6 +65,8 @@
 	import InfoIcon from 'phosphor-svelte/lib/InfoIcon';
 	import XIcon from 'phosphor-svelte/lib/XIcon';
 	import FolderIcon from 'phosphor-svelte/lib/FolderIcon';
+
+	const androidSessionImport = isAndroidHost();
 
 	// ── backend state ──
 	let settings = $state<Record<string, string>>({});
@@ -347,18 +351,6 @@
 		noMatch = !!q && !any;
 	});
 
-	const CREDITS: { name: string; what: string; licence: string; url: string }[] = [
-		{ name: 'Limusic', what: 'The app Spotless is built on', licence: 'GPL-3.0', url: 'https://github.com/SimoHypers/limusic' },
-		{ name: 'SponsorBlock', what: 'Skip segments in podcast episodes', licence: 'CC BY-NC-SA 4.0', url: 'https://sponsor.ajay.app' },
-		{ name: 'LRCLIB', what: 'Synced lyrics', licence: 'Open database', url: 'https://lrclib.net' },
-		{ name: 'mpv', what: 'Audio playback (libmpv)', licence: 'LGPL-2.1+', url: 'https://mpv.io' },
-		{ name: 'Feishin and Strawberry', what: 'Equalizer presets', licence: 'GPL-3.0', url: 'https://github.com/jeffvli/feishin' },
-		{ name: 'Apple iTunes Search and Podcast Index', what: 'Podcast directory', licence: 'Public APIs', url: 'https://podcastindex.org' },
-		{ name: 'Deezer API', what: 'Explicit-content flags', licence: 'Public API', url: 'https://developers.deezer.com' },
-		{ name: 'Tauri, Svelte, bits-ui', what: 'App framework and UI', licence: 'MIT / Apache-2.0', url: 'https://tauri.app' },
-		{ name: 'Phosphor Icons', what: 'Icons', licence: 'MIT', url: 'https://phosphoricons.com' },
-		{ name: 'Figtree', what: 'Typeface', licence: 'SIL OFL 1.1', url: 'https://github.com/erikdkennedy/figtree' }
-	];
 	const ext = (url: string) => api.openExternal(url).catch((e) => toast.error(String(e)));
 </script>
 
@@ -405,6 +397,10 @@
 			{/if}
 		</div>
 	</header>
+    <nav aria-label="Settings pages" class="flex gap-2 border-b border-white/10 pb-4">
+        <button class="rounded-full bg-white px-4 py-2 text-sm font-bold text-black" aria-current="page">Settings</button>
+        <button class="rounded-full bg-bg-highlight px-4 py-2 text-sm font-bold text-white hover:bg-bg-elevated-highlight" onclick={() => goto('/customization')}>Customization</button>
+    </nav>
 
 	{#if failed}
 		<div class="py-16 text-center">
@@ -434,19 +430,21 @@
 		<!-- Account -->
 		<section data-settings-section>
 			{@render section('account', 'Account')}
-			<Row label="Spotless works without an account. Your library, likes and history are stored on this Mac.">
+			<Row label="Ztunes works without an account. Your library, likes and history are stored on this device.">
 				{#snippet control()}<span class="text-sm text-white">Local profile</span>{/snippet}
 			</Row>
 			<Row
 				label={account?.signedIn
-					? `Signed in to YouTube Music as ${account.name ?? account.email ?? 'your account'}`
-					: 'Sign in to YouTube Music (optional) to use your YouTube playlists and recommendations'}
+					? `Connected to Google as ${account.name ?? account.email ?? 'your account'}`
+					: androidSessionImport
+						? 'Import a Chrome or Edge browser session from a computer to access your YouTube Music library; Ztunes will not open the YouTube Music app'
+						: 'Connect your Google account (optional) to access your existing YouTube Music library'}
 			>
 				{#snippet control()}
 					{#if account?.signedIn}
 						<Pill variant="outline" onclick={signOut}>Sign out</Pill>
 					{:else}
-						<Pill variant="outline" onclick={() => startSignIn()}>Sign in</Pill>
+						<Pill variant="outline" onclick={() => startSignIn()}>{androidSessionImport ? 'Import session' : 'Sign in'}</Pill>
 					{/if}
 				{/snippet}
 			</Row>
@@ -572,7 +570,7 @@
 								</div>
 							{:else}
 								<p class="px-2 text-sm text-text-subdued">
-									{local.loading ? 'Scanning…' : 'No folders yet. Add a folder of music files to play them in Spotless.'}
+									{local.loading ? 'Scanning…' : 'No folders yet. Add a folder of music files to play them in Ztunes.'}
 								</p>
 							{/each}
 							{#if local.error}<p class="px-2 text-sm text-text-negative">{local.error}</p>{/if}
@@ -738,7 +736,7 @@
 		<!-- Startup and window behavior -->
 		<section data-settings-section>
 			{@render section('startup', 'Startup and window behavior')}
-			<Row label="Open Spotless automatically after you log into the computer">
+			<Row label="Open Ztunes automatically after you log into the computer">
 				{#snippet control()}
 					<Select
 						value={startup}
@@ -752,7 +750,7 @@
 					/>
 				{/snippet}
 			</Row>
-			<Row label="Close button should minimize the Spotless window">
+			<Row label="Close button should minimize the Ztunes window">
 				{#snippet control()}
 					<Switch label="Close button minimizes" checked={on('close_to_tray', true)} onchange={(v) => write('close_to_tray', String(v))} />
 				{/snippet}
@@ -793,7 +791,7 @@
 					{/snippet}
 				</Row>
 			{/if}
-			<Row label="Cache: audio Spotless keeps on this Mac so songs start faster">
+			<Row label="Cache: audio Ztunes keeps on this Mac so songs start faster">
 				{#snippet children()}
 					<span class="mt-0.5 block text-xs">{cacheBytes === null ? '—' : formatBytes(cacheBytes)}</span>
 				{/snippet}
@@ -814,7 +812,7 @@
 		<!-- About -->
 		<section data-settings-section>
 			{@render section('about', 'About')}
-			<!-- Also run by Spotless › Check for Updates… (menu://check-updates), which lands here. -->
+			<!-- Also run by Ztunes › Check for Updates… (menu://check-updates), which lands here. -->
 			<Row id="updates" label="Check for updates" hint={`Version ${version || '…'}`}>
 				{#if updateState.result}
 					<div
@@ -840,7 +838,7 @@
 					</Pill>
 				{/snippet}
 			</Row>
-			<Row label="Spotless is free software under the GNU General Public License v3.0 or later. Audio comes from YouTube; no ads, no account.">
+			<Row label="Ztunes is based on Spotless and Limusic and is licensed under GPL-3.0 or later. Music is supplied by YouTube Music and other services.">
 				{#snippet control()}
 					<Pill variant="outline" onclick={() => ext('https://www.gnu.org/licenses/gpl-3.0.html')}>
 						License <Icon icon={ArrowSquareOutIcon} size={16} />
@@ -848,26 +846,18 @@
 				{/snippet}
 			</Row>
 			<Row label="Credits">
-				{#snippet below()}
-					<ul class="flex flex-col">
-						{#each CREDITS as c (c.name)}
-							<li>
-								<button
-									type="button"
-									class="group flex min-h-10 w-full items-center justify-between gap-4 rounded-sm px-2 py-1 text-left hover:bg-bg-tinted"
-									onclick={() => ext(c.url)}
-								>
-									<span class="min-w-0">
-										<span class="text-sm text-white group-hover:underline">{c.name}</span>
-										<span class="text-sm text-text-subdued"> · {c.what}</span>
-									</span>
-									<span class="shrink-0 text-xs text-text-subdued">{c.licence}</span>
-								</button>
-							</li>
-						{/each}
-					</ul>
-				{/snippet}
-			</Row>
+                {#snippet below()}
+                    <div class="space-y-2 py-2 text-sm text-white">
+                        <p>Developer: Yasin Beigy</p>
+                        <p>Designer: Yasin Beigy</p>
+                    </div>
+                {/snippet}
+            </Row>
+            <Row label="Open-source licenses and notices" hint="Ztunes uses third-party open-source software.">
+                {#snippet control()}
+                    <Pill variant="outline" onclick={() => ext('https://github.com/fjenn/spotless/blob/main/THIRD-PARTY-NOTICES.md')}>Notices <Icon icon={ArrowSquareOutIcon} size={16} /></Pill>
+                {/snippet}
+            </Row>
 		</section>
 	{/if}
 </div>

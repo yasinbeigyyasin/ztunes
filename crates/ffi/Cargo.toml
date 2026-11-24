@@ -12,7 +12,6 @@ name = "encore_ffi"
 crate-type = ["lib", "staticlib", "cdylib"]
 
 [dependencies]
-encore-core = { path = "../core" }
 innertube = { path = "../innertube" }
 player = { path = "../player" }
 libmpv2 = "4"
@@ -23,3 +22,10 @@ tokio = { workspace = true }
 tracing = { workspace = true }
 tracing-subscriber = { version = "0.3", features = ["env-filter"] }
 uniffi = "0.29.5"
+
+# Android uses a small in-process JS engine rather than desktop V8 or Apple JavaScriptCore.
+[target.'cfg(target_os = "android")'.dependencies]
+encore-core = { path = "../core", default-features = false, features = ["quickjs"] }
+
+[target.'cfg(not(target_os = "android"))'.dependencies]
+encore-core = { path = "../core" }

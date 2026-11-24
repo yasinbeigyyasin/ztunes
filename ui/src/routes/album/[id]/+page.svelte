@@ -182,7 +182,7 @@
 	{#if rows.length}<span class="mx-1" aria-hidden="true">•</span><span>{songsMeta(rows)}</span>{/if}
 {/snippet}
 
-<svelte:head><title>{album?.title ?? 'Album'} | Spotless</title></svelte:head>
+<svelte:head><title>{album?.title ?? 'Album'} | Ztunes</title></svelte:head>
 
 {#if loading && !album}
 	<Skeleton variant="header" />

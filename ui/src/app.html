@@ -2,12 +2,13 @@
 <html lang="en" class="dark">
 	<head>
 		<meta charset="utf-8" />
-		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
 		<meta name="text-scale" content="scale" />
 		<!-- WebView2 (Windows) is Chromium, where some paint tricks that help WebKitGTK cost frames
 		     instead. See `.art-wash` in layout.css. -->
 		<script>
 			if (/Chrome\//.test(navigator.userAgent)) document.documentElement.classList.add('chromium');
+			if (/ZtunesAndroidWebView/.test(navigator.userAgent)) window.__ZTUNES_ANDROID__ = true;
 		</script>
 		%sveltekit.head%
 	</head>

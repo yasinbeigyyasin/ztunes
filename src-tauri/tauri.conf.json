@@ -1,6 +1,6 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "Spotless",
+  "productName": "Ztunes",
   "version": "1.0.4-rc.5",
   "identifier": "app.spotless.desktop",
   "build": {
@@ -13,7 +13,7 @@
     "windows": [
       {
         "create": false,
-        "title": "Spotless",
+        "title": "Ztunes",
         "width": 1280,
         "height": 832,
         "minWidth": 800,

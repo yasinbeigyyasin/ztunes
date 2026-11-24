@@ -25,6 +25,7 @@ import { whenBackOnline } from './reconnect';
 import { setErrorWords, toast as kitToast } from './kit/toast';
 import { playSingleAt } from './trackapi'; // lane magic-d1
 import { nextSignIn, type SignInEvent, type SignInPhase } from './signin';
+import { isAndroidHost } from '$lib/platform/android/host';
 
 // ── lane magic-d1 ── error toasts in the app's language (read when a toast shows).
 setErrorWords(() => ({ unreachable: t('errors.unreachable') }));
@@ -1351,13 +1352,13 @@ function signInEvent(event: SignInEvent) {
 	ui.signIn = nextSignIn(ui.signIn, event);
 }
 
-/** Open the Google sign-in window (or bring it back) and show "Signing in…" until Spotless is in. */
+/** Open the host sign-in UI and keep the sheet open until the account is verified. */
 export function startSignIn(addAccount = false) {
 	signInEvent({ type: 'start' });
 	api.loginWebview(addAccount).catch((e) => signInEvent({ type: 'error', message: String(e) }));
 }
 
-/** Cancel on the sheet: close the Google window and the sheet. */
+/** Cancel on the sheet: close the native/host sign-in UI and reset the sheet. */
 export function cancelSignIn() {
 	if (ui.signIn.kind === 'waiting') api.cancelLogin().catch(() => {});
 	signInEvent({ type: 'cancelled' });
@@ -1754,6 +1755,13 @@ export function initApp(mini = false): () => void {
 		api.onAccountSelectionRequired(() => {
 			signInEvent({ type: 'picker' });
 			openChannelPicker(true);
+		}),
+		api.onSessionRejected(() => {
+			if (!isAndroidHost() || !auth.account?.signedIn) return;
+			signInEvent({
+				type: 'error',
+				message: 'Your YouTube Music session was rejected or expired. Re-import a fresh browser session to reconnect your library.'
+			});
 		}),
 		// The sheet shows the error while it is up; a toast covers the rest.
 		api.onLoginError((msg) => {

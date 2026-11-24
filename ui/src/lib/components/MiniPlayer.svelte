@@ -6,7 +6,7 @@
 	// p-nowplaying:
 	//  - square (300x300): the cover full-bleed; on hover a dark scrim with the controls centred
 	//    (previous · play 48px · next), title/artists + like at the bottom, the progress bar, and
-	//    window buttons at the top (switch to bar, close back to Spotless);
+	//    window buttons at the top (switch to bar, close back to Ztunes);
 	//  - bar (400x100): cover left, title/artists, like, previous · play · next, the square toggle.
 	// #121212, radius 8. The layout follows the window's shape; Rust sizes the window.
 	// `data-tauri-drag-region="deep"` makes every non-control part a drag handle.
@@ -151,7 +151,7 @@
 		<div class="flex h-full flex-col items-center justify-center gap-2 p-4 text-center">
 			<Icon icon={MusicNotesIcon} size={32} class="text-text-subdued" />
 			<p class="text-sm text-text-subdued">Nothing playing</p>
-			<button class="text-sm font-bold hover:underline" onclick={back}>Back to Spotless</button>
+			<button class="text-sm font-bold hover:underline" onclick={back}>Back to Ztunes</button>
 		</div>
 	{:else if bar}
 		<div class="flex h-full items-center gap-3 pr-3">
@@ -200,7 +200,7 @@
 				<button class={btn} aria-label="Bar miniplayer" title="Bar miniplayer" onclick={() => setBar(true)}>
 					<Icon icon={RowsIcon} size={16} />
 				</button>
-				<button class={btn} aria-label="Close miniplayer" title="Back to Spotless" onclick={back}>
+				<button class={btn} aria-label="Close miniplayer" title="Back to Ztunes" onclick={back}>
 					<Icon icon={XIcon} size={16} />
 				</button>
 			</div>

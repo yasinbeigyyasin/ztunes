@@ -9,6 +9,7 @@
 	 * while playing; any movement/key shows it. Esc exits. Navigating closes it.
 	 */
 	import { offersLyrics } from '$lib/nowlyrics.svelte';
+	import { appearance } from '$lib/theme.svelte';
 	import { onMount } from 'svelte';
 	import { trapFocus } from '$lib/kit/focustrap';
 	import { beforeNavigate } from '$app/navigation';
@@ -180,7 +181,7 @@
 			class="absolute inset-0 transition-[background] duration-500"
 			style="background:linear-gradient(to bottom,{tint.bg} 0%,{tint.deep} 55%,#000 100%)"
 		></div>
-		{#if backdrop && !npui.fullscreenLyrics}
+		{#if appearance.artworkBackground && backdrop && !npui.fullscreenLyrics}
 			<img
 				src={backdrop}
 				alt=""

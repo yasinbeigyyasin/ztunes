@@ -82,11 +82,11 @@
 		     heading + pill: "Lyrics preview Show lyrics". -->
 		<div
 			aria-hidden="true"
-			class="min-h-0 flex-1 overflow-hidden text-xl leading-8 font-bold tracking-[-0.01em]"
+			class="zt-lyrics min-h-0 flex-1 overflow-hidden text-xl leading-8 font-bold tracking-[-0.01em]"
 			style="mask-image:linear-gradient(to bottom,#000 55%,transparent);-webkit-mask-image:linear-gradient(to bottom,#000 55%,transparent)"
 		>
 			{#each shown as l, i (i)}
-				<p class="transition-colors duration-100" style="color:{l.current ? '#fff' : tint.soft}">
+				<p dir="auto" class="text-start transition-colors duration-100" style="color:{l.current ? '#fff' : tint.soft}">
 					{l.text}
 				</p>
 			{/each}

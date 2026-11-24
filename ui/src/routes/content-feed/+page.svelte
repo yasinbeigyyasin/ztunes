@@ -42,7 +42,7 @@
 	const empty = $derived(!!data && !groups.fresh.length && !groups.earlier.length);
 </script>
 
-<svelte:head><title>What's New | Spotless</title></svelte:head>
+<svelte:head><title>What's New | Ztunes</title></svelte:head>
 
 <div class="wn px-[var(--content-spacing)] pt-16 pb-10">
 	<h1 class="text-2xl font-bold text-white">What's New</h1>

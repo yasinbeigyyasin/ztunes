@@ -439,9 +439,9 @@
 			disabled={depth >= deepest}
 			onclick={() => history.forward()}
 		/>
-		<Tooltip text="Spotless" side="bottom">
+		<Tooltip text="Ztunes" side="bottom">
 			{#snippet trigger(props)}
-				<a {...props} href="/" aria-label="Spotless home" class="ml-2 text-white">
+				<a {...props} href="/" aria-label="Ztunes home" class="ml-2 text-white">
 					<Logo size={32} />
 				</a>
 			{/snippet}

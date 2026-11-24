@@ -1,7 +1,7 @@
 <script lang="ts">
 	/**
 	 * Connect view of the right panel (audit 15-lyrics-and-connect.jpg): the device playing now in a
-	 * highlighted card (accent icon + name, "Spotless" with the equaliser), then "Select another
+	 * highlighted card (accent icon + name, "Ztunes" with the equaliser), then "Select another
 	 * output" with every output device mpv reports (`audio_devices`), 56px rows; a click switches
 	 * output (`set_audio_device`). `auto` follows the macOS default output. Refreshes on open and
 	 * when devices come and go (audio store events). The device being switched to shows a spinner.
@@ -35,10 +35,10 @@
 		id === 'auto' ? 'This Mac' : (list.find((d) => d.name === id)?.description ?? id);
 	const currentSub = $derived(
 		selected === 'auto'
-			? 'Spotless · System output'
+			? 'Ztunes · System output'
 			: active !== selected
-				? `Spotless · ${nameOf(selected)} unavailable, using system output`
-				: 'Spotless'
+				? `Ztunes · ${nameOf(selected)} unavailable, using system output`
+				: 'Ztunes'
 	);
 	const others = $derived([
 		...(selected !== 'auto' ? [{ name: 'auto', description: 'This Mac (system output)' }] : []),
@@ -118,6 +118,6 @@
 		{/each}
 	{/if}
 	<p class="px-2 pt-8 text-sm text-text-subdued">
-		Spotless plays on this Mac. Pick the speakers or headphones the sound should come out of.
+		Ztunes plays on this Mac. Pick the speakers or headphones the sound should come out of.
 	</p>
 </div>

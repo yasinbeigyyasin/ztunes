@@ -110,7 +110,7 @@ pub fn open_login(app: AppHandle, state: Arc<AppState>, add_account: bool) {
         let (tx, nudge) = tokio::sync::mpsc::unbounded_channel::<()>();
         let tx2 = tx.clone();
         let builder = WebviewWindowBuilder::new(&app2, LOGIN_LABEL, WebviewUrl::External(url))
-            .title("Sign in to YouTube Music · Spotless")
+            .title("Google sign-in · Ztunes")
             .inner_size(LOGIN_SIZE.0, LOGIN_SIZE.1)
             .skip_taskbar(true)
             .minimizable(false)

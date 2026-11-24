@@ -26,7 +26,7 @@ use crate::potoken::PoTokenGenerator;
 /// `ENCORE_IOS_CHAIN` turns the iOS chain on elsewhere, for the latency bench
 /// (`firstaudio_bench.rs`).
 pub fn main_stream_last() -> bool {
-    cfg!(target_os = "ios") || std::env::var_os("ENCORE_IOS_CHAIN").is_some()
+    cfg!(any(target_os = "ios", target_os = "android")) || std::env::var_os("ENCORE_IOS_CHAIN").is_some()
 }
 
 /// Everything the player + UI + media layer need for one track. context/06 PlaybackData.

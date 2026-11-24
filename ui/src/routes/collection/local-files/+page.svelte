@@ -192,7 +192,7 @@
 					icon={FolderSimpleIcon}
 					title={local.folders.length ? 'No music found in your folders' : 'Add your local music'}
 					body={local.folders.length
-						? 'Spotless plays MP3, FLAC, M4A, OGG, WAV and more. Add another folder or rescan.'
+						? 'Ztunes plays MP3, FLAC, M4A, OGG, WAV and more. Add another folder or rescan.'
 						: 'Choose a folder on this Mac and its songs show up here. Nothing is uploaded.'}
 					actionLabel="Add a folder"
 					onAction={pickFolder}

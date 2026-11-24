@@ -96,3 +96,9 @@ block2 = "0.6"
 [dev-dependencies]
 innertube = { path = "../innertube", features = ["test-util"] }
 tokio = { workspace = true, features = ["rt-multi-thread", "macros", "sync", "time", "test-util"] }
+
+# Android is not covered by rquickjs's pregenerated bindings. Generate bindings with the NDK.
+[target.'cfg(target_os = "android")'.dependencies.rquickjs]
+version = "0.9"
+optional = true
+features = ["bindgen"]

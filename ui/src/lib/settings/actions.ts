@@ -56,7 +56,7 @@ export function importOpml() {
 export async function exportOpml() {
 	const path = await pickSave({
 		title: 'Export podcasts (OPML)',
-		defaultPath: 'Spotless Podcasts.opml',
+		defaultPath: 'Ztunes Podcasts.opml',
 		filters: [{ name: 'OPML', extensions: ['opml'] }]
 	}).catch(() => null);
 	if (!path) return;

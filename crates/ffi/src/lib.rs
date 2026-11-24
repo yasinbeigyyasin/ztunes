@@ -168,7 +168,18 @@ impl Host for FfiHost {
     }
     /// The cipher runs in-process in JavaScriptCore (S3), never in a WKWebView.
     fn js_engine(&self) -> Option<Arc<dyn JsEngine>> {
-        Some(Arc::new(InProcEngine::jsc()))
+        #[cfg(target_vendor = "apple")]
+        {
+            Some(Arc::new(InProcEngine::jsc()))
+        }
+        #[cfg(target_os = "android")]
+        {
+            Some(Arc::new(InProcEngine::quickjs()))
+        }
+        #[cfg(not(any(target_vendor = "apple", target_os = "android")))]
+        {
+            None
+        }
     }
 }
 

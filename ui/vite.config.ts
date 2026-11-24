@@ -2,8 +2,25 @@ import tailwindcss from '@tailwindcss/vite';
 import adapter from '@sveltejs/adapter-static';
 import { sveltekit } from '@sveltejs/kit/vite';
 import { defineConfig } from 'vite';
+import { fileURLToPath } from 'node:url';
+
+const androidWebView = process.env.ZTUNES_ANDROID_WEBVIEW === '1';
+const androidShim = (name: string) => fileURLToPath(new URL(`./src/lib/platform/android/${name}.ts`, import.meta.url));
 
 export default defineConfig({
+	resolve: {
+		alias: androidWebView ? [
+			{ find: '@tauri-apps/api/core', replacement: androidShim('core') },
+			{ find: '@tauri-apps/api/event', replacement: androidShim('event') },
+			{ find: '@tauri-apps/api/window', replacement: androidShim('window') },
+			{ find: '@tauri-apps/api/webview', replacement: androidShim('webview') },
+			{ find: '@tauri-apps/api/app', replacement: androidShim('app') },
+			{ find: '@tauri-apps/plugin-process', replacement: androidShim('process') },
+			{ find: '@tauri-apps/plugin-updater', replacement: androidShim('updater') },
+			{ find: '@tauri-apps/plugin-dialog', replacement: androidShim('dialog') },
+			{ find: '@tauri-apps/plugin-clipboard-manager', replacement: androidShim('clipboard') }
+		] : []
+	},
 	server: {
 		port: 5183,
 		strictPort: true,

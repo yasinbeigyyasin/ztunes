@@ -85,7 +85,7 @@
 	>
 		<span class="grid size-8 shrink-0 place-items-center overflow-hidden rounded-sm bg-bg-elevated-highlight text-text-subdued">
 			{#if liked}
-				<span class="grid size-full place-items-center bg-[linear-gradient(135deg,#ff2d7a,#6a1b9a)] text-white"><Icon icon={HeartIcon} size={14} fill /></span>
+				<span class="grid size-full place-items-center bg-[linear-gradient(135deg,#ff4b4b,#6a1b9a)] text-white"><Icon icon={HeartIcon} size={14} fill /></span>
 			{:else if image && !failedArt[image]}
 				<img
 					src={thumb(image, 64)}

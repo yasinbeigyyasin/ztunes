@@ -13,10 +13,10 @@
 //! **Migration.** At launch, [`Db::seal_secrets`](crate::db::Db::seal_secrets) moves any cookie
 //! still in plaintext into the Keychain. Idempotent.
 //!
-//! **Fallback.** A Keychain write that fails (no keychain, locked, refused) keeps the cookie in
-//! SQLite as before, so sign-in never breaks over it. A sealed cookie the Keychain can't give back
-//! reads as "not signed in" (the row stays, so a later launch with the Keychain back can still
-//! read it).
+//! **Fallback.** Desktop retains its historical plaintext fallback when the OS store refuses a
+//! write. Android account sign-in is strict: it aborts unless the host's Keystore-backed store
+//! accepts the cookie, and ordinary sealing never writes a cookie to SQLite in plaintext. A sealed
+//! cookie the store can't give back reads as "not signed in" (the row stays for a later retry).
 //!
 //! **Prompts and ad-hoc signed builds.** macOS ties a Keychain item to the code signature of the
 //! app that created it. A Developer ID build's signature stays the same from release to release,
@@ -119,15 +119,47 @@ fn reader() -> Option<&'static dyn Store> {
     None
 }
 
-/// What to write to SQLite for `value`: [`SEALED`] once the store holds it, else the value
-/// itself (no store, or the store refused: the plaintext fallback).
+/// Store an authentication cookie before committing its sealed marker to SQLite. Android callers
+/// use this strict variant so a failed Keystore write aborts sign-in instead of leaving a
+/// signed-in account that cannot survive process restart. Desktop keeps its historical fallback.
+pub fn seal_account_cookie(name: &str, value: &str) -> Result<String, String> {
+    if value.is_empty() || value == SEALED {
+        return Ok(value.to_owned());
+    }
+    if cfg!(target_os = "android") {
+        let store = store().ok_or_else(|| "Android Keystore is unavailable".to_owned())?;
+        store
+            .set(name, value)
+            .map_err(|_| "Android secure credential storage failed".to_owned())?;
+        Ok(SEALED.to_owned())
+    } else {
+        Ok(seal(name, value))
+    }
+}
+
+/// What to write to SQLite for `value`: [`SEALED`] once the store holds it. Desktop keeps its
+/// historical plaintext fallback when no OS store is available; Android fails closed so a cookie
+/// can never silently land in the database in plaintext.
 pub fn seal(name: &str, value: &str) -> String {
-    let Some(store) = store() else { return value.to_owned() };
+    let Some(store) = store() else {
+        if cfg!(target_os = "android") {
+            tracing::error!(
+                name,
+                "secrets: Android Keystore is unavailable; refusing plaintext persistence"
+            );
+            return SEALED.to_owned();
+        }
+        return value.to_owned();
+    };
     if value.is_empty() || value == SEALED {
         return value.to_owned();
     }
     match store.set(name, value) {
         Ok(()) => SEALED.to_owned(),
+        Err(e) if cfg!(target_os = "android") => {
+            tracing::error!(name, error = %e, "secrets: Android Keystore write failed; refusing plaintext persistence");
+            SEALED.to_owned()
+        }
         Err(e) => {
             tracing::warn!(name, error = %e, "secrets: Keychain write failed, keeping it in the database");
             value.to_owned()

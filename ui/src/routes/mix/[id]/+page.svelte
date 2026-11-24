@@ -95,7 +95,7 @@
 {#if error}
 	<div class="pt-16"><ErrorState message="Try reloading the page." onRetry={() => load(id, true)} /></div>
 {:else}
-	<PageHeader type="Playlist" {title} {image} description={subtitle} owner={{ name: 'Spotless' }} {details} bind:tintOut={tint} />
+	<PageHeader type="Playlist" {title} {image} description={subtitle} owner={{ name: 'Ztunes' }} {details} bind:tintOut={tint} />
 	<ActionBar
 		{playing}
 		{onPlay}

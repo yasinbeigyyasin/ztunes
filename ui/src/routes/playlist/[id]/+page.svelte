@@ -604,7 +604,7 @@
 	{#if useMosaic}<Mosaic {covers} />{:else if headerSrc}<img src={headerSrc} alt="" class="size-full object-cover" onerror={headerFailed} />{/if}
 {/snippet}
 
-<svelte:head><title>{title || 'Playlist'} | Spotless</title></svelte:head>
+<svelte:head><title>{title || 'Playlist'} | Ztunes</title></svelte:head>
 
 {#if loading && !pl}
 	<div class="relative">

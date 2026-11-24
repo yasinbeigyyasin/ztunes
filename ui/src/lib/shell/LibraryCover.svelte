@@ -21,7 +21,7 @@
 	style="width:{size}px;height:{size}px;border-radius:{round ? '50%' : `${radius}px`}"
 >
 	{#if row.kind === 'liked'}
-		<div class="grid size-full place-items-center bg-[linear-gradient(135deg,#ff2d7a,#6a1b9a)] text-white">
+		<div class="grid size-full place-items-center bg-[linear-gradient(135deg,#ff4b4b,#6a1b9a)] text-white">
 			<Icon icon={HeartIcon} size={glyph} fill />
 		</div>
 	{:else if row.kind === 'episodes'}

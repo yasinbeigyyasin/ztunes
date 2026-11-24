@@ -174,7 +174,7 @@
 					<Logo size={24} class="mr-1" />
 				{:else if owner.image}
 					<img src={owner.image} alt="" class="mr-1 size-6 rounded-full object-cover" />
-				{:else if owner.name === 'Spotless'}
+				{:else if (owner.name === 'Spotless' || owner.name === 'Ztunes')}
 					<Logo size={24} class="mr-1" />
 				{:else}
 					<span class="mr-1 grid size-6 shrink-0 place-items-center rounded-full bg-bg-elevated-highlight text-text-subdued" aria-hidden="true">

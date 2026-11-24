@@ -6,6 +6,13 @@ use std::sync::Mutex;
 use md5::{Digest, Md5};
 use rusqlite::Connection;
 
+fn secret_storage_db_error(message: String) -> rusqlite::Error {
+    rusqlite::Error::ToSqlConversionFailure(Box::new(std::io::Error::new(
+        std::io::ErrorKind::Other,
+        message,
+    )))
+}
+
 /// Clearing the lyrics cache spares songs whose source was picked by hand in the lyrics footer (or
 /// their timing nudged): those are the user's choices, not a cache.
 // ponytail: the pin lives in the lyrics JSON rather than a column, it is read nowhere else.
@@ -555,12 +562,15 @@ impl Db {
         data_sync_id: Option<&str>,
         account_json: &str,
     ) -> rusqlite::Result<()> {
+        let sealed_cookie =
+            crate::secrets::seal_account_cookie(crate::secrets::SESSION, session_cookie)
+                .map_err(secret_storage_db_error)?;
         let mut conn = self.0.lock().unwrap();
         let tx = conn.transaction()?;
         tx.execute(
             "INSERT INTO settings(key, value) VALUES('session_cookie', ?1)
              ON CONFLICT(key) DO UPDATE SET value = excluded.value",
-            [crate::secrets::seal(crate::secrets::SESSION, session_cookie)], // stream: import2
+            [sealed_cookie.as_str()], // stream: import2
         )?;
         tx.execute(
             "INSERT INTO settings(key, value) VALUES('selected_identity_json', ?1)
@@ -593,12 +603,15 @@ impl Db {
         session_cookie: &str,
         account_id: Option<&str>,
     ) -> rusqlite::Result<()> {
+        let sealed_cookie =
+            crate::secrets::seal_account_cookie(crate::secrets::SESSION, session_cookie)
+                .map_err(secret_storage_db_error)?;
         let mut conn = self.0.lock().unwrap();
         let tx = conn.transaction()?;
         tx.execute(
             "INSERT INTO settings(key, value) VALUES('session_cookie', ?1)
              ON CONFLICT(key) DO UPDATE SET value = excluded.value",
-            [crate::secrets::seal(crate::secrets::SESSION, session_cookie)], // stream: import2
+            [sealed_cookie.as_str()], // stream: import2
         )?;
         for key in ["selected_identity_json", "data_sync_id", "account_json"] {
             tx.execute("DELETE FROM settings WHERE key = ?1", [key])?;
@@ -634,6 +647,9 @@ impl Db {
     /// Insert or refresh a saved account. `added_at` is deliberately not updated on conflict: a
     /// re-login refreshes the cookie and identity, not the account's place in the list order.
     pub fn upsert_account(&self, account: &StoredAccount) -> rusqlite::Result<()> {
+        let name = crate::secrets::account_name(&account.id);
+        let sealed_cookie = crate::secrets::seal_account_cookie(&name, &account.session_cookie)
+            .map_err(secret_storage_db_error)?;
         let conn = self.0.lock().unwrap();
         conn.execute(
             "INSERT INTO accounts(id, session_cookie, data_sync_id, selected_identity_json, \
@@ -648,7 +664,7 @@ impl Db {
             rusqlite::params![
                 account.id,
                 // stream: import2
-                crate::secrets::seal(&crate::secrets::account_name(&account.id), &account.session_cookie),
+                sealed_cookie,
                 account.data_sync_id,
                 account.selected_identity_json,
                 account.account_json,
@@ -721,10 +737,21 @@ impl Db {
     /// Nothing happens when the row is gone (the account was removed while a request was in
     /// flight), which is what should happen.
     pub fn update_account_cookie(&self, id: &str, session_cookie: &str) {
+        let name = crate::secrets::account_name(id);
+        let sealed = match crate::secrets::seal_account_cookie(&name, session_cookie) {
+            Ok(sealed) => sealed,
+            Err(_) => {
+                tracing::error!(
+                    "secrets: refusing to update an account cookie without secure storage"
+                );
+                return;
+            }
+        };
         let conn = self.0.lock().unwrap();
-        let sealed = crate::secrets::seal(&crate::secrets::account_name(id), session_cookie); // stream: import2
-        let _ = conn
-            .execute("UPDATE accounts SET session_cookie = ?1 WHERE id = ?2", [sealed.as_str(), id]);
+        let _ = conn.execute(
+            "UPDATE accounts SET session_cookie = ?1 WHERE id = ?2",
+            [sealed.as_str(), id],
+        );
     }
 
     /// Delete a saved account row. Whether removing it signs the app out is the caller's decision
@@ -740,12 +767,15 @@ impl Db {
     /// mid-switch can't restart into projections for one account and a pointer for another.
     /// Clears `account_selection_pending`: a completed account needs no channel pick.
     pub fn restore_account(&self, account: &StoredAccount) -> rusqlite::Result<()> {
+        let sealed_cookie =
+            crate::secrets::seal_account_cookie(crate::secrets::SESSION, &account.session_cookie)
+                .map_err(secret_storage_db_error)?;
         let mut conn = self.0.lock().unwrap();
         let tx = conn.transaction()?;
         tx.execute(
             "INSERT INTO settings(key, value) VALUES('session_cookie', ?1)
              ON CONFLICT(key) DO UPDATE SET value = excluded.value",
-            [crate::secrets::seal(crate::secrets::SESSION, &account.session_cookie)], // stream: import2
+            [sealed_cookie.as_str()], // stream: import2
         )?;
         for (key, value) in [
             ("data_sync_id", account.data_sync_id.as_deref()),

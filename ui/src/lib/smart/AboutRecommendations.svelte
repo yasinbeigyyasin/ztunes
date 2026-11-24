@@ -8,7 +8,7 @@
 
 <script lang="ts">
 	/**
-	 * Spotify's "About recommendations" dialog (the link under a Made for you hero), for Spotless:
+	 * Spotify's "About recommendations" dialog (the link under a Made for you hero), for Ztunes:
 	 * how the recommendations are made (on this Mac, from your own listening) and the switches
 	 * that control them. Kit Modal at Spotify's 544px; the body scrolls, one white pill at the end.
 	 */
@@ -30,13 +30,13 @@
 <Modal bind:open={aboutRecs.open} title="About recommendations" width={544}>
 	<div class="-mx-6 max-h-[50vh] overflow-y-auto px-6 text-base leading-6 text-text-subdued">
 		<p>
-			Spotless's recommendations help you find music you'll love: your mixes, Weekly Discoveries,
+			Ztunes's recommendations help you find music you'll love: your mixes, Weekly Discoveries,
 			New Release Mix, Smart Shuffle, radio and autoplay.
 		</p>
 		<p class="mt-4">
 			They're worked out on this Mac, from your own listening: what you play and how often, the
 			songs you like, what you skip, what's in your playlists, the artists you follow, and any
-			listening history you imported from Spotify. That history stays on this Mac. Spotless only asks
+			listening history you imported from Spotify. That history stays on this Mac. Ztunes only asks
 			YouTube Music for songs related to a few of the tracks you play, then picks and orders them
 			here. There are no ads and no paid promotion in your recommendations.
 		</p>
